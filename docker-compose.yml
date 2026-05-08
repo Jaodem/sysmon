@@ -1,0 +1,18 @@
+# Orquestación de servicios del proyecto sysmon
+# Por ahora solamente la base de datos -- se irá agregando más servicios por etapa
+
+services:
+   postgres:
+      image: postgres:16-alpine
+      container_name: sysmon_postgres
+      environment:
+         POSTGRES_USER: sysmon_user
+         POSTGRES_PASSWORD: sysmon_pass
+         POSTGRES_DB: sysmon_db
+      ports:
+         - "5432:5432"
+      volumes:
+         - postgres_data:/var/lib/postgresql/data
+
+volumes:
+   postgres_data:
