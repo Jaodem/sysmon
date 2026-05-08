@@ -1,7 +1,7 @@
 # Servicio encargado de recolectar métricas del sistema operativo
 import psutil
 
-def get_cpu_metrics():
+def get_cpu_metrics() -> dict:
     """
     Retorna métricas actuales de uso de CPU
     percent=False evita el bloque de 1 segundo en la primera llamada.
@@ -13,7 +13,7 @@ def get_cpu_metrics():
         "frequency_mhz": psutil.cpu_freq().current if psutil.cpu_freq() else None,
     }
 
-def get_memory_metrics():
+def get_memory_metrics() -> dict:
     """
     Retorna métricas actuales de uso de memoria RAM.
     Los valores vienen eb bytes, se los convierte a MB para legibilidad.
@@ -26,7 +26,7 @@ def get_memory_metrics():
         "usage_percent": memory.percent,
     }
 
-def get_disk_metrics():
+def get_disk_metrics() -> dict:
     """
     Retorna métricas de uso de disco en la partición raíz.
     """
@@ -38,7 +38,7 @@ def get_disk_metrics():
         "use_percent": disk.percent,
     }
 
-def get_system_snapshot():
+def get_system_snapshot() -> dict:
     """
     Retorna un snapshot completo del estado actual del sistema.
     Esta función agrupa todas las métricas en un solo objeto.
