@@ -1,18 +1,38 @@
-# Orquestación de servicios del proyecto sysmon
-# Por ahora solamente la base de datos -- se irá agregando más servicios por etapa
-
+# Orquestación de todos los servicios del proyecto sysmon
 services:
-   postgres:
-      image: postgres:16-alpine
-      container_name: sysmon_postgres
-      environment:
-         POSTGRES_USER: sysmon_user
-         POSTGRES_PASSWORD: sysmon_pass
-         POSTGRES_DB: sysmon_db
-      ports:
-         - "5432:5432"
-      volumes:
-         - postgres_data:/var/lib/postgresql/data
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: sysmon_postgres
+    environment:
+      POSTGRES_USER: sysmon_user
+      POSTGRES_PASSWORD: sysmon_pass
+      POSTGRES_DB: sysmon_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sysmon_user -d sysmon_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sysmon_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sysmon_user:sysmon_pass@postgres:5432/sysmon_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/.venv
 
 volumes:
-   postgres_data:
+  postgres_data:
