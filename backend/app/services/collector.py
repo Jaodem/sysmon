@@ -1,5 +1,7 @@
 # Servicio encargado de recolectar métricas del sistema operativo
 import psutil
+from app.models.metrics import MetricSnapshot
+from app.database.connection import AsyncSessionLocal
 
 def get_cpu_metrics() -> dict:
     """
@@ -35,7 +37,7 @@ def get_disk_metrics() -> dict:
         "total_gb": round(disk.total / 1024 ** 3, 2),
         "used_gb": round(disk.used / 1024 ** 3, 2),
         "free_gb": round(disk.free / 1024 ** 3, 2),
-        "use_percent": disk.percent,
+        "usage_percent": disk.percent,
     }
 
 def get_system_snapshot() -> dict:
@@ -48,4 +50,28 @@ def get_system_snapshot() -> dict:
         "memory": get_memory_metrics(),
         "disk": get_disk_metrics(),
     }
-    
+
+async def save_snapshot() -> MetricSnapshot:
+    """
+    Recolecta las métricas actuales del sistema y las persiste en la base de datos.
+    Retorna el objeto guardado con su ID y timestamp asignados por PosrgreSQL.
+    """
+    snapshot_data = get_system_snapshot()
+
+    snapshot = MetricSnapshot(
+        cpu_usage_percent=snapshot_data["cpu"]["usage_percent"],
+        cpu_frequency_mhz=snapshot_data["cpu"]["frequency_mhz"],
+        memory_total_mb=snapshot_data["memory"]["total_mb"],
+        memory_used_mb=snapshot_data["memory"]["used_mb"],
+        memory_usage_percent=snapshot_data["memory"]["usage_percent"],
+        disk_total_gb=snapshot_data["disk"]["total_gb"],
+        disk_used_gb=snapshot_data["disk"]["used_gb"],
+        disk_usage_percent=snapshot_data["disk"]["usage_percent"],
+    )
+
+    async with AsyncSessionLocal() as session:
+        session.add(snapshot)
+        await session.commit()
+        await session.refresh(snapshot)
+
+    return snapshot
