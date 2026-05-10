@@ -1,7 +1,7 @@
 # Punto de entrada principal de la aplicación FastAPI
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import metrics
+from app.routers import metrics, websockets
 
 app = FastAPI(
     title="Sysmon API",
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(metrics.router)
+app.include_router(websockets.router)
 
 @app.get("/")
 async def root():
