@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from app.database.connection import Base, DATABASE_URL
 import app.models.metrics  # necesario para que Alembic detecte los modelos
+import app.models.alerts
 
 config = context.config
 
