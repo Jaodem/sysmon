@@ -3,6 +3,7 @@ import asyncio
 import json
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.services.collector import save_snapshot
+from app.services.alert_engine import evaluate_alerts
 
 router = APIRouter(tags=["WebSockets"])
 
@@ -19,6 +20,7 @@ async def stream_metrics(websocket: WebSocket) -> None:
         while True:
             # Se recolectan y se persisten las métricas
             snapshot = await save_snapshot()
+            alerts = await evaluate_alerts(snapshot)
     
             # Se serializa el snapshot a un dict para enviarlo como JSON
             payload = {
@@ -38,6 +40,15 @@ async def stream_metrics(websocket: WebSocket) -> None:
                     "used_gb": snapshot.disk_used_gb,
                     "usage_percent": snapshot.disk_usage_percent,
                 },
+                "alerts": [
+                    {
+                        "metric": a.metric,
+                        "value": a.value,
+                        "threshold": a.threshold,
+                        "message": a.message,
+                    }
+                    for a in alerts
+                ]
             }
     
             await websocket.send_text(json.dumps(payload))
