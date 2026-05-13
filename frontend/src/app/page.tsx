@@ -6,6 +6,7 @@ import { WsStatus } from "@/components/ws-status";
 import { MemoryCard } from "@/components/memory-card";
 import { DiskCard } from "@/components/disk-card";
 import { CpuChart } from "@/components/cpu-chart";
+import { AlertsPanel } from "@/components/alerts-panel";
 
 // URL del WebSocket — en desarrollo apunta al backend local
 const WS_URL = "ws://localhost:8000/ws/metrics";
@@ -79,6 +80,9 @@ export default function DashboardPage() {
 
           {/* Gráfico histórico */}
           <CpuChart data={chartHistory} />
+
+          {/* Panel de alertas */}
+          <AlertsPanel alerts={latestSnapshot.alerts} />
 
           {/* Footer con timestamp */}
           <p className="text-green-900 text-xs text-right">
