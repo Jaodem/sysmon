@@ -1,3 +1,5 @@
+// Tipos que representan la estructura de datos que envía el backend por WebSocket
+
 export interface CpuMetrics {
   usage_percent: number;
   frequency_mhz: number | null;
@@ -15,12 +17,20 @@ export interface DiskMetrics {
   usage_percent: number;
 }
 
+export interface AlertEvent {
+  metric: "cpu" | "memory" | "disk";
+  value: number;
+  threshold: number;
+  message: string;
+}
+
 export interface MetricSnapshot {
   id: number;
   recorded_at: string;
   cpu: CpuMetrics;
   memory: MemoryMetrics;
   disk: DiskMetrics;
+  alerts: AlertEvent[];
 }
 
 // Tipo para cada punto del historial en los gráficos
