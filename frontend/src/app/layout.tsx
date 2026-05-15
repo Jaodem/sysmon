@@ -1,6 +1,7 @@
 // Layout raíz — define la estructura HTML base y el estilo global
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -19,9 +20,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body className={`${jetbrainsMono.variable} font-mono bg-black text-green-400 antialiased`}>
-        {children}
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
