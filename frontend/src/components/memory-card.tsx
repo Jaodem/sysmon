@@ -12,25 +12,30 @@ export function MemoryCard({ data }: MemoryCardProps) {
 
   // El color cambia según el nivel de uso — verde, amarillo, rojo
   const barColor =
-    usagePercent < 60 ? "bg-green-400" :
-    usagePercent < 80 ? "bg-yellow-400" :
-    "bg-red-400";
+    usagePercent < 60 ? "bg-green-500 dark:bg-green-400" :
+    usagePercent < 80 ? "bg-yellow-500 dark:bg-yellow-400" :
+    "bg-red-500 dark:bg-red-400";
 
   return (
-    <div className="border border-green-900 bg-black p-4 rounded font-mono">
-      <p className="text-green-500 text-xs mb-3 uppercase tracking-widest">
+    <div className="border rounded p-4 font-mono
+      border-green-200 bg-white dark:border-green-900 dark:bg-black">
+      <p className="text-xs mb-3 uppercase tracking-widest
+        text-green-600 dark:text-green-500">
         Memoria RAM
       </p>
-      <p className="text-green-400 text-3xl font-bold mb-1">
+      <p className="text-3xl font-bold mb-1
+        text-green-600 dark:text-green-400">
         {usagePercent.toFixed(1)}%
       </p>
-      <div className="w-full bg-green-950 rounded h-2 mb-3">
+      <div className="w-full rounded h-2 mb-3
+        bg-green-100 dark:bg-green-950">
         <div
           className={`h-2 rounded transition-all duration-500 ${barColor}`}
           style={{ width: `${usagePercent}%` }}
         />
       </div>
-      <div className="text-green-700 text-xs space-y-1">
+      <div className="text-xs space-y-1
+        text-green-700 dark:text-green-700">
         <p>
           Usada: {data.used_mb.toFixed(0)} MB
         </p>
